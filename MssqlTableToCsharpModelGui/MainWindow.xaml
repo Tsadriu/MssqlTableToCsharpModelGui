@@ -1,28 +1,13 @@
 ﻿<Window x:Class="MssqlTableToCsharpModelGui.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        Title="MSSQL Table to C# model" Height="800" Width="600">
+        Title="MainWindow" Height="450" Width="800">
+	
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
-        <Label>Stored Connection Strings</Label>
-        <ListBox Grid.Row="1" Grid.Column="0" x:Name="listConnectionString" />
-        <StackPanel Grid.Row="1" Grid.Column="1" Margin="5,0,0,0">
-            <StackPanel Margin="5,0,0,0">
-                <TextBox x:Name="textConnectionString" />
-                <Button x:Name="buttonAddConnectionString" Margin="0,5,0,0" Click="ButtonAddConnectionString_OnClick">Add connection string</Button>
-            </StackPanel>
-        </StackPanel>
+        <Button Content="Add Connection String" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="150" Click="AddConnectionStringButton_Click"/>
+        <Button Content="Load Schemas" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalAlignment="Top" Width="150" Click="LoadSchemas_Click"/>
+        <ListBox x:Name="schemasListBox" HorizontalAlignment="Left" Height="100" Margin="10,100,0,0" VerticalAlignment="Top" Width="200" SelectionChanged="SchemasListBox_SelectionChanged"/>
+        <ListBox x:Name="tablesListBox" HorizontalAlignment="Left" Height="100" Margin="220,100,0,0" VerticalAlignment="Top" Width="200"/>
+        <Button Content="Export" HorizontalAlignment="Left" Margin="220,50,0,0" VerticalAlignment="Top" Width="200"/>
     </Grid>
 </Window>

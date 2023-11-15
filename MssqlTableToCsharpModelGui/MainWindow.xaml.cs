@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using MssqlTableToCsharpModelGui.Classes;
 
 namespace MssqlTableToCsharpModelGui
 {
@@ -24,15 +17,58 @@ namespace MssqlTableToCsharpModelGui
         {
             InitializeComponent();
         }
-        private void ButtonAddConnectionString_OnClick(object sender, RoutedEventArgs e)
+
+        private void AddConnectionStringButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textConnectionString.Text) || listConnectionString.Items.Contains(textConnectionString.Text))
+            //Open dialog for adding new connection
+            var dialog = new AddConnectionStringDialog();
+            if (dialog.ShowDialog() == true)
             {
-                return;
+                //Save the connection string to file
+                System.IO.File.WriteAllText("connectionString.txt", dialog.ConnectionString);
             }
-            
-            listConnectionString.Items.Add(textConnectionString.Text);
-            textConnectionString.Clear();
+        }
+
+        private void LoadSchemas_Click(object sender, RoutedEventArgs e)
+        {
+            //Read the saved connection string from file
+            var connectionString = System.IO.File.ReadAllText("connectionString.txt");
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand("SELECT schema_name FROM information_schema.schemata", connection);
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        //Add each schema name to a ListBox (schemasListBox) in your XAML
+                        schemasListBox.Items.Add(reader.GetString(0));
+                    }
+                }
+            }
+        }
+
+        private void SchemasListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //Clear previously loaded tables
+            tablesListBox.Items.Clear();
+
+            //Load tables of the selected schema
+            var selectedSchema = schemasListBox.SelectedItem.ToString();
+            var connectionString = System.IO.File.ReadAllText("connectionString.txt");
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                var command = new SqlCommand($"SELECT table_name FROM information_schema.tables WHERE table_schema = '{selectedSchema}'", connection);
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        //Add each table name to a ListBox (tablesListBox) in your XAML
+                        tablesListBox.Items.Add(reader.GetString(0));
+                    }
+                }
+            }
         }
     }
 }
